@@ -1,17 +1,18 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Dimensions, FlatList, TextInput, StyleSheet, Text, View } from 'react-native';
 
-export default function Board({boards}) {
+export default function Board({boards, changeVal}) {
   const numCol = 3
-  const onChangeText = () => {}
   const renderInnerItem = ({item, index}) => {
     return(
       <View style={styles.innerItem}>
         <TextInput
+          editable={true}
           keyboardType="number-pad"
           style={{ height: 30, borderColor: 'gray'}}
-          value={item.toString()}
+          defaultValue={item.toString()}
+          onChangeText={(text) => changeVal(text, index, boards[1])}
         />
       </View>
     )
@@ -19,7 +20,7 @@ export default function Board({boards}) {
     return(
       <View style={styles.innerContainer}>
         <FlatList
-          data={boards}
+          data={boards[0]}
           renderItem={renderInnerItem}
           numColumns={numCol}
           listKey={(item, index) => 'D' + index.toString()}
