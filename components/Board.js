@@ -23,6 +23,7 @@ export default function Board({boards, changeVal}) {
           data={boards[0]}
           renderItem={renderInnerItem}
           numColumns={numCol}
+          keyExtractor={(item, index) => `D${index}`}
           listKey={(item, index) => 'D' + index.toString()}
         />
       </View>

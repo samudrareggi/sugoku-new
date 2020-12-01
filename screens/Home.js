@@ -60,6 +60,7 @@ export default function Home() {
     )
   }
 
+  console.log(JSON.stringify(boards))
   return (
     <View style={styles.container}>
       <FlatList
