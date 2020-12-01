@@ -2,46 +2,44 @@
 import React, { useState } from 'react';
 import { Button, Dimensions, FlatList, TextInput, StyleSheet, Text, View } from 'react-native';
 
-export default function Board({boards, changeVal}) {
-  const numCol = 3
-  const renderInnerItem = ({item, index}) => {
-    return(
-      <View style={styles.innerItem}>
+export default function Board({ boards, changeVal }) {
+  return (
+    boards[0].map((el, index) => {
+      if (el !== 0) {
+        return (
+          <Text style={styles.innerContainer} key={`inner${index}`}>
+            {el.toString()}
+          </Text>
+        )
+      }
+      return (
         <TextInput
-          editable={true}
+          key={`inner${index}`}
+          maxLength={1}
           keyboardType="number-pad"
-          style={{ height: 30, borderColor: 'gray'}}
-          defaultValue={item.toString()}
+          style={styles.innerContainer1}
+          defaultValue=''
           onChangeText={(text) => changeVal(text, index, boards[1])}
         />
-      </View>
-    )
-  }
-    return(
-      <View style={styles.innerContainer}>
-        <FlatList
-          data={boards[0]}
-          renderItem={renderInnerItem}
-          numColumns={numCol}
-          keyExtractor={(item, index) => `D${index}`}
-          listKey={(item, index) => 'D' + index.toString()}
-        />
-      </View>
-    )
+      )
+    })
+  )
 }
 
 const styles = StyleSheet.create({
 
   innerContainer: {
-    flex: 1,
-    margin: 5
+    fontSize: 24,
+    width: 40,
+    height: 40,
+    borderWidth: 1,
+    backgroundColor: "#bce6eb"
   },
-  innerItem: {
-    backgroundColor: "#ededed",
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-    margin: 1,
-    height: 50
+  innerContainer1: {
+    fontSize: 24,
+    width: 40,
+    height: 40,
+    borderWidth: 1,
+    backgroundColor: "white"
   }
 });

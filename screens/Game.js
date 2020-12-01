@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Dimensions, FlatList, ActivityIndicator, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { Button, ActivityIndicator, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import Board from '../components/Board'
 import { fetchBoards, solveBoards, validateBoards } from '../store'
 import { useDispatch, useSelector } from 'react-redux'
 
-export default function Game({route, navigation}) {
+export default function Game({ route, navigation }) {
+  const [value, setValue] = useState(null)
+  const defaultBoards = useSelector(state => state.defaultBoards)
   const boards = useSelector(state => state.boards)
   const loadingBoards = useSelector(state => state.loadingBoards)
   const loadingSolve = useSelector(state => state.loadingSolve)
   const status = useSelector(state => state.status)
   const dispatch = useDispatch()
   const { name } = route.params
-  const numCol = 3
 
-  const encodeBoard = (board) => board.reduce((result, row, i) => result + `%5B${encodeURIComponent(row)}%5D${i === board.length -1 ? '' : '%2C'}`, '')
+  const encodeBoard = (board) => board.reduce((result, row, i) => result + `%5B${encodeURIComponent(row)}%5D${i === board.length - 1 ? '' : '%2C'}`, '')
   const encodeParams = (params) =>
     Object.keys(params)
-    .map(key => key + '=' + `%5B${encodeBoard(params[key])}%5D`)
-    .join('&');
+      .map(key => key + '=' + `%5B${encodeBoard(params[key])}%5D`)
+      .join('&')
 
   useEffect(() => {
+    console.log('disiniii')
     dispatch(fetchBoards())
   }, [dispatch])
 
@@ -33,7 +35,10 @@ export default function Game({route, navigation}) {
 
   const validateHandler = () => {
     dispatch(validateBoards(encodeParams, boards))
-    console.log(status)
+    
+    navigation.navigate('Finish', {
+      name
+    })
   }
 
   const changeVal = (text, indexChild, indexParent) => {
@@ -50,11 +55,14 @@ export default function Game({route, navigation}) {
         return element
       }
     })
-    dispatch({
-      type: 'UPDATE_BOARDS',
-      payload: {board: newData}
+    setValue({
+      board: newData
     })
-  }
+    dispatch({
+        type: 'UPDATE_BOARDS',
+        payload: { board: newData }
+      })
+    }
 
   if (loadingBoards || loadingSolve) {
     return (
@@ -66,25 +74,27 @@ export default function Game({route, navigation}) {
   }
 
   console.log(JSON.stringify(boards))
+  console.log(JSON.stringify(defaultBoards))
   return (
-    <View style={styles.container}>
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center"}}>
-        <Text style={{ fontSize: 24, marginVertical: 20 }}>{ name }</Text>
-      </View>
-      <FlatList
-        data={boards.board}
-        renderItem={({ item, index }) => {
-          return <Board boards={[item, index]} changeVal={changeVal}/>
-        }}
-        numColumns={numCol}
-        keyExtractor={(item, index) => `cont${index}`}
-      />
-      <View style={styles.button}>
-        <TouchableOpacity style={styles.button1}>
-          <Button onPress={resetHandler} title="Reset"/>
-          <Button onPress={solveHandler} title="Solve"/>
-          <Button onPress={validateHandler} title="Validate"/>
+    <View style={{ alignItems: "center" }}>
+      <Text style={{ fontSize: 20, marginVertical: 20 }}>{name ? name : 'Player'}</Text>
+      <View style={styles.innerContainer}>
+        {
+          boards.board.map((el, index) => (
+            <Board key={index} boards={[el, index]} changeVal={changeVal} />
+          ))
+        }
+        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+        <TouchableOpacity style={styles.button}>
+          <Button onPress={resetHandler} title="Reset" />
         </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Button onPress={solveHandler} title="Solve" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Button onPress={validateHandler} title="Validate" />
+        </TouchableOpacity>
+        </View>
       </View>
     </View>
   )
@@ -92,44 +102,21 @@ export default function Game({route, navigation}) {
 
 const styles = StyleSheet.create({
   button: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-around"
-  },
-  button1: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    height: 40
+    width: 80,
+    margin: 100
   },
   loading: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center"
   },
-  container: {
-    flex: 1,
-    marginBottom: 40,
-    marginHorizontal: 10
-  },
   innerContainer: {
-    flex: 1,
-    margin: 5
-  },
-  innerItem: {
-    backgroundColor: "#ededed",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    height: 360,
+    width: 360,
+    margin: 5,
     alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-    margin: 1,
-    height: 50
-  },
-  item: {
-    backgroundColor: "#ededed",
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-    margin: 1,
-    height: Dimensions.get('window').width / 3
+    justifyContent: "center"
   }
-});
+})

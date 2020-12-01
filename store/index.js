@@ -2,6 +2,7 @@ import { applyMiddleware, createStore } from 'redux'
 import thunk from 'redux-thunk'
 const initialState = {
   boards: [],
+  defaultBoards: [],
   status: '',
   loadingBoards: false,
   loadingSolve: false,
@@ -17,11 +18,18 @@ export function fetchBoards() {
     fetch('https://sugoku.herokuapp.com/board?difficulty=easy')
       .then(res => res.json())
       .then(data => {
-          dispatch({
-            type: 'FETCH_BOARDS',
-            payload: data
-          })
+        dispatch({
+          type: 'FETCH_BOARDS',
+          payload: data
+        })
+        return data
       })
+      .then((data => {
+        dispatch({
+          type: 'SET_BOARDS',
+          payload: data
+        })
+      }))
       .catch(err => {
         console.log(err)
       })
@@ -96,6 +104,8 @@ function reducer(state = initialState, action) {
       return {...state, loadingBoards: action.payload}
     case 'FETCH_BOARDS':
       return {...state, boards: action.payload}
+    case 'SET_BOARDS':
+      return {...state, defaultBoards: action.payload}
     case 'UPDATE_BOARDS':
       return {...state, boards: action.payload}
     case 'SET_SOLVE_LOADING':

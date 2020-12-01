@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Text, Image, TouchableOpacity, StyleSheet, TextInput, View } from 'react-native'
-import Board from '../components/Board'
-import { fetchBoards, solveBoards, validateBoards } from '../store'
-import { useDispatch, useSelector } from 'react-redux'
+import { fetchBoards } from '../store'
+import { useDispatch } from 'react-redux'
 
 export default function Home({ navigation}) {
   const [value, setValue] = useState('Player')
+  const dispatch = useDispatch()
+  
+  useEffect(() => {
+    dispatch(fetchBoards())
+  }, [dispatch])
+
   const changeVal = (e) => {
     setValue(e)
   }
@@ -14,6 +19,7 @@ export default function Home({ navigation}) {
       name: value
     })
   }
+
   return(
     <View style={styles.container}>
       <Image
