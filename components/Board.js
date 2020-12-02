@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Button, Dimensions, FlatList, TextInput, StyleSheet, Text, View } from 'react-native';
+import { TextInput, StyleSheet, Text } from 'react-native';
 
 export default function Board({ boards, changeVal }) {
   return (

@@ -3,19 +3,20 @@ import thunk from 'redux-thunk'
 const initialState = {
   boards: [],
   defaultBoards: [],
+  grade: 'easy',
   status: '',
-  loadingBoards: false,
+  loadingBoards: true,
   loadingSolve: false,
-  loadingValidate: false,
+  loadingValidate: true,
 }
 
-export function fetchBoards() {
+export function fetchBoards(grade) {
   return (dispatch) => {
     dispatch({
       type: 'SET_BOARDS_LOADING',
       payload: true
     })
-    fetch('https://sugoku.herokuapp.com/board?difficulty=easy')
+    fetch('https://sugoku.herokuapp.com/board?difficulty=' + grade)
       .then(res => res.json())
       .then(data => {
         dispatch({
@@ -106,12 +107,14 @@ function reducer(state = initialState, action) {
       return {...state, boards: action.payload}
     case 'SET_BOARDS':
       return {...state, defaultBoards: action.payload}
+    case 'SET_GRADE':
+      return {...state, grade: action.grade}
     case 'UPDATE_BOARDS':
       return {...state, boards: action.payload}
     case 'SET_SOLVE_LOADING':
       return {...state, loadingSolve: action.payload}
     case 'SOLVE_BOARDS':
-      return {...state, boards: action.payload}
+      return {...state, defaultBoards: action.payload}
     case 'SET_VALIDATE_LOADING':
       return {...state, loadingValidate: action.payload}
     case 'VALIDATE_BOARDS':

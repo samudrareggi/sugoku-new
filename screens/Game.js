@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { Button, ActivityIndicator, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { Button, ActivityIndicator, StyleSheet, Text, View, TouchableOpacity, Image, BackHandler } from 'react-native'
 import Board from '../components/Board'
 import { fetchBoards, solveBoards, validateBoards } from '../store'
 import { useDispatch, useSelector } from 'react-redux'
 
 export default function Game({ route, navigation }) {
-  const [value, setValue] = useState(null)
   const defaultBoards = useSelector(state => state.defaultBoards)
   const boards = useSelector(state => state.boards)
   const loadingBoards = useSelector(state => state.loadingBoards)
   const loadingSolve = useSelector(state => state.loadingSolve)
+  const loadingValidate = useSelector(state => state.loadingValidate)
+  const grade = useSelector(state => state.grade)
   const status = useSelector(state => state.status)
+  const [cheat, setCheat] = useState(false)
   const dispatch = useDispatch()
   const { name } = route.params
 
@@ -21,24 +23,27 @@ export default function Game({ route, navigation }) {
       .join('&')
 
   useEffect(() => {
-    console.log('disiniii')
-    dispatch(fetchBoards())
-  }, [dispatch])
+    dispatch(fetchBoards(grade))
+    BackHandler.addEventListener('hardwareBackPress', () => true)
+  }, [])
 
   const resetHandler = () => {
-    dispatch(fetchBoards())
+    dispatch(fetchBoards(grade))
   }
-
+  
   const solveHandler = () => {
-    dispatch(solveBoards(encodeParams, boards))
+    setCheat(true)
+    dispatch(solveBoards(encodeParams, defaultBoards))
   }
 
   const validateHandler = () => {
-    dispatch(validateBoards(encodeParams, boards))
-    
-    navigation.navigate('Finish', {
-      name
-    })
+    cheat ? dispatch(validateBoards(encodeParams, defaultBoards)) : dispatch(validateBoards(encodeParams, boards))
+    if (!loadingValidate) {
+      navigation.replace('Finish', {
+        name,
+        status
+      })
+    }
   }
 
   const changeVal = (text, indexChild, indexParent) => {
@@ -55,32 +60,34 @@ export default function Game({ route, navigation }) {
         return element
       }
     })
-    setValue({
-      board: newData
-    })
+
     dispatch({
         type: 'UPDATE_BOARDS',
         payload: { board: newData }
-      })
-    }
+    })
+  }
 
   if (loadingBoards || loadingSolve) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Please wait...</Text>
+      <Image
+        source={require('../assets/Cube-loading.gif')}
+        style={{ width: 150, height: 150 }}
+      />
+      <Image
+        source={require('../assets/loading.gif')}
+        style={{ width: 150, height: 150 }}
+      />
       </View>
     )
   }
 
-  console.log(JSON.stringify(boards))
-  console.log(JSON.stringify(defaultBoards))
   return (
     <View style={{ alignItems: "center" }}>
-      <Text style={{ fontSize: 20, marginVertical: 20 }}>{name ? name : 'Player'}</Text>
+      <Text style={{ fontSize: 20, marginTop: 80, marginBottom: 50 }}>{name ? name : 'Player'}</Text>
       <View style={styles.innerContainer}>
         {
-          boards.board.map((el, index) => (
+          defaultBoards.board.map((el, index) => (
             <Board key={index} boards={[el, index]} changeVal={changeVal} />
           ))
         }
