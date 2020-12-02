@@ -3,7 +3,6 @@ import { Text, View } from 'react-native'
 import { RadioButton } from 'react-native-paper'
 
 export default function Radio({ grade, checked, setChecked }) {
-  console.log(checked)
   return (
     <View style={{flexDirection: 'row', alignItems: "center"}}>
       <RadioButton

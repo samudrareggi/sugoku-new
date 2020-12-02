@@ -113,7 +113,6 @@ export default function Game({ route, navigation }) {
   }
 
   const timerStart = () => {
-    console.log(time)
     let updatedS = time.s, updatedM = time.m, updatedH = time.h
     setInterv(setInterval(() => {
       if(updatedM === 59){
@@ -128,7 +127,6 @@ export default function Game({ route, navigation }) {
       setTime({ h:updatedH, m:updatedM, s:updatedS })
     }, 1000))
   }
-  console.log(time.s)
 
   if (loadingBoards || loadingSolve) {
     return (
