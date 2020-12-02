@@ -28,6 +28,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": ""
+    "description": "Sugoku game",
+    "githubUrl": "https://github.com/samudrareggi/sugoku"
   }
 }

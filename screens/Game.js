@@ -92,6 +92,7 @@ export default function Game({ route, navigation }) {
   }
 
   const changeVal = (text, indexChild, indexParent) => {
+    console.log(JSON.stringify(boards))
     const newData = boards.map((element, index) => {
       if (index === indexParent) {
         return element.map((el, i) => {
@@ -108,7 +109,7 @@ export default function Game({ route, navigation }) {
 
     dispatch({
         type: 'UPDATE_BOARDS',
-        payload: { board: newData }
+        payload: newData
     })
   }
 
