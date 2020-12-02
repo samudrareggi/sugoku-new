@@ -8,6 +8,7 @@ const initialState = {
   loadingBoards: true,
   loadingSolve: false,
   loadingValidate: true,
+  players: []
 }
 
 export function fetchBoards(grade) {
@@ -15,6 +16,10 @@ export function fetchBoards(grade) {
     dispatch({
       type: 'SET_BOARDS_LOADING',
       payload: true
+    })
+    dispatch({
+      type: 'VALIDATE_BOARDS',
+      payload: ''
     })
     fetch('https://sugoku.herokuapp.com/board?difficulty=' + grade)
       .then(res => res.json())
@@ -119,6 +124,9 @@ function reducer(state = initialState, action) {
       return {...state, loadingValidate: action.payload}
     case 'VALIDATE_BOARDS':
       return {...state, status: action.payload}
+    case 'SET_PLAYER':
+      const newData = state.players.concat(action.payload)
+      return {...state, players: newData}
     default:
       return state
   }

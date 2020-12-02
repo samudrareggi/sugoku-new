@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Button, Text, Image, TouchableOpacity, StyleSheet, TextInput, View } from 'react-native'
 import { RadioButton } from 'react-native-paper'
 import { useDispatch } from 'react-redux'
+
 export default function Home({ navigation}) {
   const [value, setValue] = useState('Player')
   const [checked, setChecked] = useState('easy');
@@ -19,8 +20,6 @@ export default function Home({ navigation}) {
       name: value
     })
   }
-
-  console.log(checked)
 
   return(
     <View style={styles.container}>
