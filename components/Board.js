@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TextInput, StyleSheet, Text } from 'react-native';
 
 export default function Board({ boards, changeVal }) {
@@ -33,7 +33,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderWidth: 1,
-    backgroundColor: "#bce6eb"
+    backgroundColor: "#F7B367",
+    borderColor: "#F28061"
   },
   innerContainer1: {
     textAlign: "center",
@@ -42,5 +43,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderWidth: 1,
     backgroundColor: "white",
+    borderColor: "#F28061"
   }
 });

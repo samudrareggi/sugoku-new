@@ -7,7 +7,7 @@ import Timer from '../components/Timer'
 import Leaderboard from '../components/Leaderboard'
 
 export default function Finish({route, navigation}) {
-  const {name, status, time} = route.params
+  const {name, time} = route.params
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -29,12 +29,12 @@ export default function Finish({route, navigation}) {
         <Card.Content style={styles.content}>
           <Text style={{ fontSize: 32, fontWeight: "900" }}>Game Over</Text>
           <Text style={{ fontSize: 24 }}>{name}</Text>
-          <Text>Time</Text>
+          <Text style={{ fontSize: 18, marginBottom: 20 }}>Time</Text>
           <Timer time={time}/>
-          <Text style={{ fontSize: 18}}>Leaderboard</Text>
+          <Text style={{ fontSize: 18, marginTop: 50, marginBottom: 20 }}>Leaderboard</Text>
           <Leaderboard/>
-          <TouchableOpacity style={styles.button}>
-            <Button onPress={changeScreen} title="Play again"/>
+          <TouchableOpacity activeOpacity={3} style={styles.button}>
+            <Button color="#DC5E69" onPress={changeScreen} title="Play again"/>
           </TouchableOpacity>
         </Card.Content>
       </Card>

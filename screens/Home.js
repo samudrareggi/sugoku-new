@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Text, Image, TouchableOpacity, StyleSheet, TextInput, View } from 'react-native'
-import { RadioButton } from 'react-native-paper'
 import { useDispatch } from 'react-redux'
+import Radio from '../components/Radio'
 
 export default function Home({ navigation}) {
   const [value, setValue] = useState('Player')
@@ -24,8 +24,12 @@ export default function Home({ navigation}) {
   return(
     <View style={styles.container}>
       <Image
+        source={require('../assets/logo.png')}
+        style={{ width: 350, height: 150 }}
+      />
+      <Image
         source={require('../assets/sudoku.png')}
-        style={{ width: 150, height: 150 }}
+        style={{ width: 150, height: 150, marginTop: 50}}
       />
       <Text style={{marginTop: 20, fontSize: 24}}>Player Name</Text>
       <TextInput
@@ -34,38 +38,9 @@ export default function Home({ navigation}) {
         defaultValue={value}
         onChangeText={(text) => changeVal(text)}
       />
-      <View style={{flexDirection: 'row', alignItems: "center"}}>
-        <RadioButton
-          value="easy"
-          color="#007BFF"
-          status={ checked === 'easy' ? 'checked' : 'unchecked' }
-          onPress={() => setChecked('easy')}
-        />
-        <Text>Easy</Text>
-        <RadioButton
-          value="medium"
-          color="#007BFF"
-          status={ checked === 'medium' ? 'checked' : 'unchecked' }
-          onPress={() => setChecked('medium')}
-        />
-        <Text>Medium</Text>
-        <RadioButton
-          value="hard"
-          color="#007BFF"
-          status={ checked === 'hard' ? 'checked' : 'unchecked' }
-          onPress={() => setChecked('hard')}
-        />
-        <Text>Hard</Text>
-        <RadioButton
-          value="random"
-          color="#007BFF"
-          status={ checked === 'random' ? 'checked' : 'unchecked' }
-          onPress={() => setChecked('random')}
-        />
-        <Text>Random</Text>
-      </View>
+      <Radio checked={ checked } setChecked={ setChecked }/>
       <TouchableOpacity style={{ width: 100, marginTop: 10 }}>
-        <Button onPress={changeScreen} title="Start"/>
+        <Button color="#DC5E69" onPress={changeScreen} title="Start"/>
       </TouchableOpacity>
     </View>
   )

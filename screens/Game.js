@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
+import { Button, StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native'
 import { fetchBoards, solveBoards, validateBoards } from '../store'
 import { useDispatch, useSelector } from 'react-redux'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -14,7 +14,7 @@ export default function Game({ route, navigation }) {
   const grade = useSelector(state => state.grade)
   const status = useSelector(state => state.status)
   const [cheat, setCheat] = useState(false)
-  const [time, setTime] = useState({ s:0, m:0, h:0 })
+  const [time, setTime] = useState({ h:0, m:0, s:0 })
   const [interv, setInterv] = useState()
   const dispatch = useDispatch()
   const { name } = route.params
@@ -32,35 +32,55 @@ export default function Game({ route, navigation }) {
   }, [])
 
   useEffect(() => {
-    if (status === 'solved') {
-      navigation.replace('Finish', {
-        name,
-        status,
-        time
-      })
-
-      dispatch({
-        type: 'SET_PLAYER',
-        payload: {
+    switch (status) {
+      case 'solved':
+        navigation.replace('Finish', {
           name,
+          status,
           time
-        }
-      })
+        })
+
+        dispatch({
+          type: 'SET_PLAYER',
+          payload: {
+            name,
+            time
+          }
+        })
+        break;
+      case 'unsolved':
+      case 'broken':
+        clearInterval(interv)
+        Alert.alert(
+          'Validate Board',
+            `Board : ${status}`,
+            [
+              { text: 'OK', onPress: () => {
+                dispatch({
+                  type: 'VALIDATE_BOARDS',
+                  payload: ''
+                })
+                timerStart()} }
+            ],
+            { cancelable: false }
+        )
+        break
+      default:
+        break;
     }
     return () => clearInterval(interv)
   }, [status])
 
   const resetHandler = () => {
     clearInterval(interv)
-    setTime({ s:0, m:0, h:0 })
-    timerStart()
+    setTime({ h:0, m:0, s:0 })
     dispatch(fetchBoards(grade))
+    timerStart()
   }
 
   const solveHandler = () => {
     clearInterval(interv)
-    setTime({ s:0, m:0, h:0 })
-    timerStart()
+    setTime({ h:0, m:0, s:0 })
     setCheat(true)
     dispatch(solveBoards(encodeParams, defaultBoards))
   }
@@ -72,7 +92,7 @@ export default function Game({ route, navigation }) {
   }
 
   const changeVal = (text, indexChild, indexParent) => {
-    const newData = boards.board.map((element, index) => {
+    const newData = boards.map((element, index) => {
       if (index === indexParent) {
         return element.map((el, i) => {
           if (i === indexChild) {
@@ -93,6 +113,7 @@ export default function Game({ route, navigation }) {
   }
 
   const timerStart = () => {
+    console.log(time)
     let updatedS = time.s, updatedM = time.m, updatedH = time.h
     setInterv(setInterval(() => {
       if(updatedM === 59){
@@ -104,7 +125,7 @@ export default function Game({ route, navigation }) {
         updatedS = 0;
       }
       updatedS++;
-      setTime({ s:updatedS, m:updatedM, h:updatedH })
+      setTime({ h:updatedH, m:updatedM, s:updatedS })
     }, 1000))
   }
   console.log(time.s)
@@ -127,22 +148,22 @@ export default function Game({ route, navigation }) {
   return (
     <View style={{ alignItems: "center", height: "100%"}}>
       <Text style={{ fontSize: 20, marginVertical: 50 }}>{name ? name : 'Player'}</Text>
-      <Timer time={time}/>
+      <Timer time={time} styles={styles}/>
       <View style={styles.innerContainer}>
         {
-          defaultBoards.board.map((el, index) => (
+          defaultBoards.map((el, index) => (
             <Board key={index} boards={[el, index]} changeVal={changeVal} />
           ))
         }
         <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
           <TouchableOpacity style={styles.button}>
-            <Button onPress={resetHandler} title="Reset" />
+            <Button color="#F28061" onPress={resetHandler} title="Reset" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.button}>
-            <Button onPress={solveHandler} title="Solve" />
+            <Button color="#F7B367" onPress={solveHandler} title="Solve" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.button}>
-            <Button onPress={validateHandler} title="Validate" />
+            <Button color="#AABE7F" onPress={validateHandler} title="Validate" />
           </TouchableOpacity>
         </View>
       </View>
@@ -169,5 +190,37 @@ const styles = StyleSheet.create({
     margin: 5,
     alignItems: "center",
     justifyContent: "center"
+  },
+  text: {
+    fontSize: 18,
+  },
+  content: {
+    flex: 1,
+    alignItems: "center",
+    marginTop: 50,
+  },
+  card1: {
+    alignItems: "center",
+    borderRadius: 10,
+    elevation: 5,
+    width: 55,
+    height: 55,
+    backgroundColor: "#F28061"
+  },
+  card2: {
+    alignItems: "center",
+    borderRadius: 10,
+    elevation: 5,
+    width: 55,
+    height: 55,
+    backgroundColor: "#F7B367"
+  },
+  card3: {
+    alignItems: "center",
+    borderRadius: 10,
+    elevation: 5,
+    width: 55,
+    height: 55,
+    backgroundColor: "#AABE7F"
   }
 })

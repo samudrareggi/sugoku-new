@@ -26,14 +26,14 @@ export function fetchBoards(grade) {
       .then(data => {
         dispatch({
           type: 'FETCH_BOARDS',
-          payload: data
+          payload: data.board
         })
         return data
       })
       .then((data => {
         dispatch({
           type: 'SET_BOARDS',
-          payload: data
+          payload: data.board
         })
       }))
       .catch(err => {
@@ -56,14 +56,14 @@ export function solveBoards(encodeParams, boards) {
     })
     fetch('https://sugoku.herokuapp.com/solve', {
       method: 'POST',
-      body: encodeParams(boards),
+      body: encodeParams({board: boards}),
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     })
       .then(response => response.json())
       .then(response => {
         dispatch({
           type: 'SOLVE_BOARDS',
-          payload: {board: response.solution}
+          payload: response.solution
         })
       })
       .catch(console.warn)
@@ -84,7 +84,7 @@ export function validateBoards(encodeParams, boards) {
     })
     fetch('https://sugoku.herokuapp.com/validate', {
       method: 'POST',
-      body: encodeParams(boards),
+      body: encodeParams({board: boards}),
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     })
       .then(response => response.json())
